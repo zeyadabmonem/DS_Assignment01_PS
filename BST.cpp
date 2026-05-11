@@ -170,7 +170,7 @@ private:
         if (node != nullptr)
         {
             inorder(node->left);
-            cout << node->data;
+            cout << node->data << endl;
             inorder(node->right);
         }
     }
@@ -179,7 +179,7 @@ private:
     {
         if (node != nullptr)
         {
-            cout << node->data;
+            cout << node->data << endl;
             preorder(node->left);
             preorder(node->right);
         }
@@ -191,7 +191,7 @@ private:
         {
             postorder(node->left);
             postorder(node->right);
-            cout << node->data;
+            cout << node->data << endl;
         }
     }
 
@@ -230,6 +230,40 @@ private:
         DeleteTree(root->left);
         DeleteTree(root->right);
         delete root;
+    }
+
+    // Search by ID Range
+    void searchByRange(Node* node, const int& startRange,const  int& endRange)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        // Deal IDs out of boundary
+        else if (endRange < node->data || startRange > node->data)
+        {
+            auto ptr = (endRange < node->data ? node->left : node->right);
+            searchByRange(ptr, startRange, endRange);
+        }
+
+        // Deal IDs matching the Start or End boundary
+        else if (endRange == node->data || startRange == node->data)
+        {
+            auto ptr = (endRange == node->data ? node->left : node->right);
+
+            // post order to save print inorder
+            searchByRange(ptr, startRange, endRange);
+            cout << node->data << endl;
+        }
+
+        // Deal IDs strictly within the Range
+        else if (endRange > node->data && startRange < node->data)
+        {
+            searchByRange(node->left, startRange, endRange);
+            cout << node->data << endl;
+            searchByRange(node->right, startRange, endRange);
+        }
     }
 
 public:
@@ -283,6 +317,12 @@ public:
         bfs(root);
     }
 
+    // Search by range
+    void searchByRange(const int& startRange, const int& endRange)
+    {
+        searchByRange(root, startRange, endRange);
+    }
+
     ~LibraryManagementSystemBST()
     {
         DeleteTree(root);
@@ -293,23 +333,31 @@ private:
 
 int main()
 {
-    LibraryManagementSystemBST tree;
+    LibraryManagementSystemBST lib;
 
-    tree.insert(Book("Yossef", 1, "Ayman"));
-    tree.insert(Book("Yossef", 2, "Ayman"));
-    tree.insert(Book("Yossef", 3, "Ayman"));
+    lib.insert(Book("Yossef", 5, "Ayman"));
+    lib.insert(Book("Yossef", 7, "Ayman"));
+    lib.insert(Book("Yossef", 3, "Ayman"));
 
-    tree.insert(Book("Yossef", 4, "Ayman"));
+    lib.insert(Book("Yossef", 4, "Ayman"));
 
-    tree.insert(Book("Yossef", 5, "Ayman"));
-    tree.insert(Book("Yossef", 6, "Ayman"));
-    tree.insert(Book("Yossef", 7, "Ayman"));
+    lib.insert(Book("Yossef", 2, "Ayman"));
+    lib.insert(Book("Yossef", 6, "Ayman"));
+    lib.insert(Book("Yossef", 1, "Ayman"));
 
-    cout << boolalpha << tree.Search(4) << endl;
-    tree.deleteNode(4);
-    cout << boolalpha << tree.Search(4) << endl;
+    cout << "================================= Search by id ==============================================\n";
 
-    tree.inorder();
+    cout << "search by id(4) Before delete it: " << boolalpha << lib.Search(4) << endl;
+    lib.deleteNode(4);
+    cout << "search by id(4) After delete it: " << boolalpha << lib.Search(4) << endl;
+
+    cout << "================================= Print inorder ==============================================\n";
+
+    lib.inorder();
+
+    cout << "\n================================= Search by Range ==============================================\n";
+
+    lib.searchByRange(2, 6);
 
     return 0;
 }
